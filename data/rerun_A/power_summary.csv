@@ -1,0 +1,2 @@
+n_agents,n_periods,assumed_icc,effect_size,alpha,design_effect,effective_n_total,effective_n_per_group,power
+96,252,0.3,0.3,0.05,76.3,317.064220183486,158.532110091743,0.758921328362556

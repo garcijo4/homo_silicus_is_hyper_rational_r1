@@ -1,0 +1,6 @@
+INFO [2025-12-03 14:40:34] Experiment initialized at 2025-12-03 14:40:34.340745
+INFO [2025-12-03 14:40:35] Parallel processing enabled with 11 workers
+INFO [2025-12-03 14:40:35] Global Disk Cache initialized at llm_cache_store
+INFO [2025-12-03 14:40:35] Configuration loaded and validated
+INFO [2025-12-03 14:40:36] Pre-simulating price paths for 252 periods
+INFO [2025-12-03 23:29:20] Full log saved: 72576 observations

@@ -1,5 +1,4 @@
-# data and generated outputs are distributed separately
-data/
+# generated outputs are not committed (data/ IS included; consider Git LFS for the ~50 MB CSVs)
 output/
 llm_cache_store/
 *.rds

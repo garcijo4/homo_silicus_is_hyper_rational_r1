@@ -38,26 +38,31 @@ R/
                                R1-A/B/C sections that produce the factorial
                                arm-effects table and Appendix Tables A4/A5.
                                See its header for an important scope warning.
-data/                          Not committed (≈50 MB per run log). Layout below.
+data/                          Raw experiment logs, all three runs (included;
+                               inventory and codebook in data/README.md).
 output/                        Written by the scripts; not committed.
 ```
 
 ## Data
 
-The experiment logs are too large for the repository and are distributed
-separately (journal replication archive / on request). Place them as:
+The raw experiment logs for all three runs are included under `data/`
+(~185 MB total). See `data/README.md` for the run inventory and key-column
+codebook, and verify integrity with `md5sum -c data/CHECKSUMS.md5`.
 
 ```
-data/original_run/experiment_results_final.csv
-data/original_run/experiment_full_log.csv        (worked example only)
-data/original_run/treatment_assignment.csv       (worked example only)
-data/rerun_A/experiment_results_final.csv
-data/rerun_B/experiment_results_final.csv
+data/original_run/   experiment_results_final.csv, experiment_full_log.csv,
+                     treatment_assignment.csv, experiment_audit.log,
+                     power_summary.csv
+data/rerun_A/        experiment_results_final.csv, treatment_assignment.csv,
+                     experiment_audit.log, power_summary.csv
+data/rerun_B/        experiment_results_final.csv, treatment_assignment.csv,
+                     experiment_audit.log, power_summary.csv
 ```
 
-or point the environment variable `ADT_DATA_ROOT` at an equivalent tree.
-No confidential or human-subjects data are involved; all "agents" are LLM
-instances.
+An alternative data location can be supplied via the environment variable
+`ADT_DATA_ROOT`. No confidential or human-subjects data are involved; all
+"agents" are LLM instances. GitHub warns on files above 50 MB - consider
+Git LFS for the CSVs if the host complains.
 
 ## How to reproduce
 

@@ -1,0 +1,6 @@
+INFO [2026-07-09 14:40:15] Experiment initialized at 2026-07-09 14:40:15.907858
+INFO [2026-07-09 14:40:17] Parallel processing enabled with 15 workers
+INFO [2026-07-09 14:40:17] Global Disk Cache initialized at llm_cache_store
+INFO [2026-07-09 14:40:17] Configuration loaded and validated
+INFO [2026-07-09 14:40:17] Pre-simulating price paths for 252 periods
+INFO [2026-07-15 18:44:19] Full log saved: 72576 observations
