@@ -2,7 +2,8 @@
 
 Raw logs from the three LLM-agent experiments reported in the paper. No human
 subjects or confidential data are involved; every "agent" is an LLM instance.
-Integrity: `md5sum -c CHECKSUMS.md5`.
+From the repository root, validate every file with `Rscript R/verify_data.R`.
+On systems with `md5sum`, `(cd data && md5sum -c CHECKSUMS.md5)` is equivalent.
 
 ## Runs
 

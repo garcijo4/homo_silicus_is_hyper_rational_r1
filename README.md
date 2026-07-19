@@ -17,10 +17,13 @@ ticker symbols replacing the real ones in everything the model sees).
 
 ```
 R/
-  reproduce_results.R          One-command pipeline: reproduces every statistic
-                               quoted in the revised manuscript and the response
-                               to the referee from the raw experiment logs.
+  verify_data.R                Cross-platform, base-R verification of every raw
+                               file against data/CHECKSUMS.md5.
+  reproduce_results.R          Focused pipeline for the core Revision-1 results
+                               quoted in the manuscript and response letter.
                                Stages: 1 = original run, 2 = Rerun A, 3 = Rerun B.
+  run_full_analysis.R          Portable wrapper for the comprehensive original
+                               and neutral-ticker analysis battery.
   worked_example_appendix_B.R  Regenerates manuscript Appendix B (a complete
                                agent-period: all prompts, panels, and logged
                                decisions) deterministically from the seeded
@@ -47,7 +50,11 @@ output/                        Written by the scripts; not committed.
 
 The raw experiment logs for all three runs are included under `data/`
 (~185 MB total). See `data/README.md` for the run inventory and key-column
-codebook, and verify integrity with `md5sum -c data/CHECKSUMS.md5`.
+codebook. Verify all files portably from the repository root with:
+
+```sh
+Rscript R/verify_data.R
+```
 
 ```
 data/original_run/   experiment_results_final.csv, experiment_full_log.csv,
@@ -61,20 +68,46 @@ data/rerun_B/        experiment_results_final.csv, treatment_assignment.csv,
 
 An alternative data location can be supplied via the environment variable
 `ADT_DATA_ROOT`. No confidential or human-subjects data are involved; all
-"agents" are LLM instances. GitHub warns on files above 50 MB - consider
-Git LFS for the CSVs if the host complains.
+"agents" are LLM instances. Every individual file is below GitHub's 100 MB
+hard limit. `.gitattributes` preserves the raw files byte-for-byte so the
+published checksums are stable across operating systems.
 
 ## How to reproduce
 
 ```sh
+git clone https://github.com/garcijo4/homo_silicus_is_hyper_rational_r1.git
+cd homo_silicus_is_hyper_rational_r1
+Rscript R/verify_data.R                # validate all included raw files
 Rscript R/reproduce_results.R            # all stages (~2–3 min)
 Rscript R/reproduce_results.R 2          # Rerun A only
 Rscript R/worked_example_appendix_B.R    # Appendix B text
+Rscript R/run_full_analysis.R original_run
+Rscript R/run_full_analysis.R rerun_B
 ```
 
-Requirements: R ≥ 4.3; packages `data.table`, `fixest`, `glue`, `digest`
-(optional `did` for the Callaway–Sant'Anna estimator, whose quoted estimates
-come from the full analysis script). Developed under R 4.3.3.
+`reproduce_results.R`, the checksum validator, and the worked example require
+R ≥ 4.3 and packages `data.table`, `fixest`, `glue`, and `digest` (the checksum
+validator itself uses base R only). Install the minimal set with:
+
+```r
+install.packages(c("data.table", "fixest", "glue", "digest"))
+```
+
+The comprehensive analysis wrapper additionally requires `tidyverse`, `did`,
+`bacondecomp`, `modelsummary`, `kableExtra`, `scales`, `sandwich`, and `lmtest`.
+`patchwork`, `clubSandwich`, and `ggrepel` enable optional branches:
+
+```r
+install.packages(c(
+  "tidyverse", "did", "bacondecomp", "modelsummary", "kableExtra",
+  "scales", "sandwich", "lmtest", "patchwork", "clubSandwich", "ggrepel"
+))
+```
+
+The package was developed under R 4.3.3. The full-analysis wrapper keeps
+generated tables and figures under `output/full_analysis/<run>/`. The
+factorial Rerun A must be analyzed with `reproduce_results.R 2`, not the
+staggered-design full battery.
 
 ### What maps where
 
@@ -111,7 +144,20 @@ come from the full analysis script). Developed under R 4.3.3.
   agents, 1–2 per arm-by-construction cell); no formal equality test is
   reported.
 
-## License and citation
+## Citation, provenance, and license
 
-Code is released under the Apache License 2.0; see `LICENSE`. Please cite the
-paper (citation to be added on acceptance).
+The original-run data are byte-identical to the CSVs in the archived
+[`homo_silicus_is_hyper_rational`](https://github.com/garcijo4/homo_silicus_is_hyper_rational)
+package. The present repository supersedes that package by adding the revised
+code, factorial Rerun A, neutral-ticker Rerun B, portable validation, and the
+Revision-1 analysis workflow.
+
+Please cite:
+
+> Garcia, John, *Homo Silicus is Hyper-Rational: Why LLM Agents Fail to
+> Replicate Attention-Driven Trading* (December 10, 2025), SSRN 5901742.
+> https://doi.org/10.2139/ssrn.5901742
+
+Machine-readable citation metadata are provided in `CITATION.cff`. Code is
+released under the Apache License 2.0; see `LICENSE`. For questions or issues,
+please use the GitHub issue tracker or the contact information on the SSRN page.

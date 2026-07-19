@@ -15,8 +15,8 @@
 #   Parts A-E       identification robustness (IPW, bounds, Oster);
 #                   mechanism tests; heterogeneity; text evidence;
 #                   transaction-cost confound tests
-#   R1-A            factorial arm effects (RERUN A ONLY: runs when arm
-#                   columns are present) + Social Momentum variant
+#   R1-A            factorial arm effects (RERUN A ONLY: requires arm
+#                   columns and the four-cohort assignment) + Social Momentum variant
 #                   descriptives -> table_r1_arm_effects.csv
 #   R1-B            persona behavioral fidelity checks (original data)
 #                   -> table_a4_persona_fidelity.csv  (manuscript Table A4)
@@ -106,11 +106,35 @@ cat("===========================================================================
 cat("LOADING AND PREPARING DATA\n")
 cat("============================================================================\n")
 
-# [R1] SET THIS PATH to the run you are analyzing:
-#   - original reported run: .../Results - Assymmetric - no interventions/experiment_results_final.csv
-#   - Rerun A (factorial):   .../R Code/R Experiment/Revision 1/<output>/experiment_results_final.csv
-#   - Rerun B (neutral):     same file from the neutral_tickers = TRUE run
-csv_file_path <- "C:/Users/johng/Google Drive/Research/Attention Driven Trading/R Code/Results - Assymmetric - no interventions/experiment_results_final.csv"
+# [R1] Portable input selection. R/run_full_analysis.R sets ADT_CSV_FILE.
+# Direct users may set that environment variable or pass a CSV path as the
+# first trailing argument. The package's original run is the default.
+.r1_args <- commandArgs(trailingOnly = TRUE)
+.r1_script_arg <- grep("^--file=", commandArgs(FALSE), value = TRUE)
+.r1_repo_root <- if (length(.r1_script_arg)) {
+  normalizePath(file.path(
+    dirname(sub("^--file=", "", .r1_script_arg[1])), "..", ".."
+  ), mustWork = TRUE)
+} else {
+  normalizePath(getwd(), mustWork = TRUE)
+}
+.r1_default_csv <- file.path(
+  Sys.getenv("ADT_DATA_ROOT", file.path(.r1_repo_root, "data")),
+  "original_run", "experiment_results_final.csv"
+)
+csv_file_path <- Sys.getenv("ADT_CSV_FILE", "")
+if (!nzchar(csv_file_path)) {
+  csv_file_path <- if (length(.r1_args) && nzchar(.r1_args[1])) {
+    .r1_args[1]
+  } else {
+    .r1_default_csv
+  }
+}
+if (!file.exists(csv_file_path)) {
+  stop("Analysis input not found: ", csv_file_path,
+       "\nSet ADT_CSV_FILE, ADT_DATA_ROOT, or pass a CSV path.")
+}
+cat("Analysis input: ", normalizePath(csv_file_path), "\n", sep = "")
 
 data <- read_csv(csv_file_path,
                  col_types = cols(
@@ -1643,19 +1667,29 @@ cat("\n--- A4. Oster's Delta Approximation ---\n")
 short_model <- feols(buy_indicator ~ cohort1_post + cohort2_post | agent_id + t, data = data_trading)
 short_r2    <- summary(short_model)$r2["adj.r2"]
 
-long_model <- feols(buy_indicator ~ cohort1_post + cohort2_post + momentum + signal_z_score | agent_id + t,
-                    data = data_trading %>% filter(!is.na(momentum)))
-long_r2 <- summary(long_model)$r2["adj.r2"]
+oster_data <- data_trading %>%
+  filter(!is.na(momentum), !is.na(signal_z_score))
+if (nrow(oster_data) == 0L) {
+  cat("  Not estimable: momentum and signal_z_score have no joint non-missing\n")
+  cat("  trading observations. Continuing with the remaining analysis.\n")
+} else {
+  long_model <- feols(
+    buy_indicator ~ cohort1_post + cohort2_post + momentum + signal_z_score | agent_id + t,
+    data = oster_data
+  )
+  long_r2 <- summary(long_model)$r2["adj.r2"]
 
-beta_short <- coef(short_model)["cohort1_postTRUE"]
-beta_long  <- coef(long_model)["cohort1_postTRUE"]
+  beta_short <- coef(short_model)["cohort1_postTRUE"]
+  beta_long  <- coef(long_model)["cohort1_postTRUE"]
 
-r_max <- min(1, 1.3 * long_r2)
-delta_approx <- (beta_long * (r_max - long_r2)) / ((beta_short - beta_long) * (long_r2 - short_r2))
+  r_max <- min(1, 1.3 * long_r2)
+  delta_approx <- (beta_long * (r_max - long_r2)) /
+    ((beta_short - beta_long) * (long_r2 - short_r2))
 
-cat(sprintf("  R2: short=%.4f, long=%.4f\n", short_r2, long_r2))
-cat(sprintf("  Beta: short=%.4f, long=%.4f\n", beta_short, beta_long))
-cat(sprintf("  Oster's delta: %.2f (>1 = robust to unobservables)\n", delta_approx))
+  cat(sprintf("  R2: short=%.4f, long=%.4f\n", short_r2, long_r2))
+  cat(sprintf("  Beta: short=%.4f, long=%.4f\n", beta_short, beta_long))
+  cat(sprintf("  Oster's delta: %.2f (>1 = robust to unobservables)\n", delta_approx))
+}
 
 
 # ==============================================================================
@@ -2082,7 +2116,9 @@ cat("Saved: robustness_table.csv\n")
 # ==============================================================================
 
 has_r1_arms <- ("attention_arm" %in% names(data_trading)) &&
-  (dplyr::n_distinct(stats::na.omit(data_trading$attention_arm)) > 1)
+  (dplyr::n_distinct(stats::na.omit(data_trading$attention_arm)) > 1) &&
+  (dplyr::n_distinct(stats::na.omit(data_trading$treatment_cohort)) == 4) &&
+  (4 %in% stats::na.omit(data_trading$treatment_cohort))
 
 if (has_r1_arms) {
   cat("\n==============================================================================\n")
@@ -2134,7 +2170,7 @@ if (has_r1_arms) {
     cat("Feeds: Section 4.6 bracketed variant results (v1/v2/v3 effects; equality p).\n")
   }
 } else {
-  cat("\n[R1-A] Skipped: loaded data have no factorial arm columns (original design).\n")
+  cat("\n[R1-A] Skipped: loaded data do not have the four-arm factorial assignment.\n")
 }
 
 # ==============================================================================

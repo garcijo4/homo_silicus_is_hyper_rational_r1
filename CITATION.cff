@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this replication package, please cite the associated manuscript."
+title: "Replication package for Homo Silicus is Hyper-Rational"
+type: software
+authors:
+  - family-names: Garcia
+    given-names: John
+repository-code: "https://github.com/garcijo4/homo_silicus_is_hyper_rational_r1"
+version: 1.0.0
+date-released: 2026-07-19
+license: Apache-2.0
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Garcia
+      given-names: John
+  title: "Homo Silicus is Hyper-Rational: Why LLM Agents Fail to Replicate Attention-Driven Trading"
+  year: 2025
+  doi: "10.2139/ssrn.5901742"
+  url: "https://ssrn.com/abstract=5901742"

@@ -1,0 +1,13 @@
+# Stable cross-platform checkouts for source and documentation.
+*.R text eol=lf
+*.md text eol=lf
+*.md5 text eol=lf
+*.cff text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+LICENSE text eol=lf
+
+# Preserve raw experiment artifacts byte-for-byte. CHECKSUMS.md5 records the
+# original bytes, including their CRLF line endings.
+/data/**/*.csv -text
+/data/**/*.log -text
