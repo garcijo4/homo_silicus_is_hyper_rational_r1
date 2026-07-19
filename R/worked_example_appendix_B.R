@@ -870,7 +870,10 @@ if (!is.null(lg)) { r3 <- lg[stage == "trading" & t == EX_T]; if (nrow(r3)) spri
 "",
 "================================================================================")
 
-writeLines(out, file.path(dirname(gsub("~+~", " ", sub("--file=", "", grep("--file=", commandArgs(FALSE), value = TRUE)[1]), fixed = TRUE)), "..", "output", "Appendix_B_worked_example.txt"))
+script_dir <- dirname(gsub("~+~", " ", sub("--file=", "", grep("--file=", commandArgs(FALSE), value = TRUE)[1]), fixed = TRUE))
+output_dir <- file.path(script_dir, "..", "output")
+dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+writeLines(out, file.path(output_dir, "Appendix_B_worked_example.txt"))
 cat(paste(out, collapse = "\n"))
 cat("\n\nSaved: Appendix_B_worked_example.txt  -> paste into manuscript Appendix B\n")
 
