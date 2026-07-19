@@ -1,0 +1,8 @@
+# data and generated outputs are distributed separately
+data/
+output/
+llm_cache_store/
+*.rds
+.Rhistory
+.RData
+.Rproj.user/
