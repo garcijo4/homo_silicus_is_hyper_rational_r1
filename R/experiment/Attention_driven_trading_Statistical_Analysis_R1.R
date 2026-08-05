@@ -1,11 +1,17 @@
 # =============================================================================
 # Attention_driven_trading_Statistical_Analysis_R1.R  -  THE FULL ANALYSIS
 # -----------------------------------------------------------------------------
-# Comprehensive analysis script for "Homo Silicus is Hyper-Rational" (JEIC
-# Revision 1). Point csv_file_path (Section 0.2) at the run to analyze and
-# source the whole file. For a minimal, portable reproduction of every number
-# quoted in the revised manuscript, use R/reproduce_results.R instead; this
-# script is the full battery (estimators, figures, publication tables).
+# Comprehensive analysis script for "Homo Silicus is Hyper-Rational" (JEIC).
+# Point csv_file_path (Section 0.2) at the run to analyze and
+# source the whole file. For a minimal, portable reproduction of the focused
+# set of manuscript statistics listed in the R/reproduce_results.R header
+# (balance, Table 4, PGR/PLR, attention-depth regression, moderation
+# descriptives, all factorial estimates and contrasts, focal randomization
+# inference, Experiment 3 TWFE and cross-run statistics), use that script;
+# statistics outside that list - the Callaway-Sant'Anna estimates, the
+# Experiment 3 asset interactions and disposition ratio, the Cohort-1
+# placebo, and Appendix Tables A4/A5 - come from THIS full battery
+# (estimators, figures, publication tables).
 #
 # STRUCTURE
 #   Sections 0-12   setup; power; manipulation checks; balance; parallel
@@ -15,7 +21,7 @@
 #   Parts A-E       identification robustness (IPW, bounds, Oster);
 #                   mechanism tests; heterogeneity; text evidence;
 #                   transaction-cost confound tests
-#   R1-A            factorial arm effects (RERUN A ONLY: requires arm
+#   R1-A            factorial arm effects (FACTORIAL RUN ONLY: requires arm
 #                   columns and the four-cohort assignment) + Social Momentum variant
 #                   descriptives -> table_r1_arm_effects.csv
 #   R1-B            persona behavioral fidelity checks (original data)
@@ -26,7 +32,7 @@
 # IMPORTANT SCOPE WARNING (see also Analysis Outputs - R1/MANIFEST.md)
 #   Sections 0-12 and Parts A-E assume the ORIGINAL staggered design (cohort
 #   1 @ t=60, cohort 2 @ t=120, cohort 3 never-treated). When csv_file_path
-#   points at the FACTORIAL Rerun A data, those sections apply the wrong
+#   points at the factorial (rerun_A) data, those sections apply the wrong
 #   cohort mapping and their outputs are NOT valid for that run; only the
 #   [R1-A] section (which builds its own arm indicators) is. Some sections
 #   then fail benignly - errors from non-applicable branches do not feed any
@@ -35,15 +41,16 @@
 # INFERENCE NOTES
 #   - Callaway-Sant'Anna uses a 1,000-draw bootstrap without a fixed seed:
 #     point estimates are exactly reproducible, bootstrap SEs vary slightly.
-#   - The Rerun A persona-by-period adjusted estimates, randomization
-#     inference, and the stacked cross-run contrast quoted in Section 4.6 of
-#     the manuscript are produced by R/reproduce_results.R (with the
-#     specification-sequence disclosure in its header).
+#   - The factorial persona-by-period adjusted estimates, randomization
+#     inference, and the stacked cross-run contrast quoted in the manuscript's
+#     factorial and neutral-label results sections are produced by
+#     R/reproduce_results.R (with the specification-sequence disclosure in
+#     its header).
 #
 # Ticker note: logs always use internal names (AAPL/NVDA/AMC/GME), including
 # neutral-ticker runs (only the model-visible display layer is renamed), so
 # meme/blue-chip classifications remain valid for every run.
-# All Revision-1 additions to the baseline script are marked with "[R1]".
+# All extended-design additions to the baseline script are marked with "[R1]".
 # =============================================================================
 
 # ==============================================================================
@@ -2103,7 +2110,7 @@ cat("Saved: robustness_table.csv\n")
 
 
 # ==============================================================================
-# [R1-A] FACTORIAL ARM EFFECTS (Rerun A) + SM VARIANT INVARIANCE
+# [R1-A] FACTORIAL ARM EFFECTS (factorial run, data/rerun_A) + SM VARIANT INVARIANCE
 # ------------------------------------------------------------------------------
 # Runs only when the loaded data come from the factorial rerun (arm columns
 # present and 4 cohorts). Cohort mapping (set in the R1 experiment script):
@@ -2111,8 +2118,7 @@ cat("Saved: robustness_table.csv\n")
 #   2 = viral attention @ 15 bps  (replicates the original bundled treatment)
 #   3 = normal attention @ 15 bps (cost-only cell)
 #   4 = never-treated control     (normal @ 5 bps)
-# Feeds: manuscript Section 4.6 bracketed results, new arm-effects table,
-#        one row in Table 10, and the Section 6.3 / 8.6 / Abstract updates.
+# Feeds: the manuscript's factorial results section and the arm-effects table.
 # ==============================================================================
 
 has_r1_arms <- ("attention_arm" %in% names(data_trading)) &&
@@ -2156,7 +2162,7 @@ if (has_r1_arms) {
   write_csv(arm_tab, "table_r1_arm_effects.csv")
   cat("Saved: table_r1_arm_effects.csv  -> manuscript Section 4.6 + Table 10 row\n")
 
-  # --- SM variant invariance (Major 5): is the Social Momentum response the same
+  # --- SM variant invariance: is the Social Momentum response the same
   #     across the three prompt constructions? ---
   if ("sm_variant" %in% names(dfa) && dplyr::n_distinct(stats::na.omit(dfa$sm_variant)) > 1) {
     sm <- dfa %>% filter(persona == "SocialMomentum") %>%

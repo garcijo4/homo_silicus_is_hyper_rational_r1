@@ -2,7 +2,7 @@
 # Attention_driven_trading_R1.R  -  THE EXPERIMENT
 # -----------------------------------------------------------------------------
 # Runs the LLM agent-based trading experiment for "Homo Silicus is
-# Hyper-Rational" (JEIC Revision 1): 96 synthetic retail investors (6 persona
+# Hyper-Rational" (JEIC): 96 synthetic retail investors (6 persona
 # prompts x 16 agents) trade 4 assets over 252 periods in a seeded market
 # simulation, under a two-tier architecture (attention allocation:
 # gpt-4o-mini; trading decision: gpt-4.1-mini; stateless calls, JSON mode).
@@ -13,14 +13,14 @@
 #                 never-treated control); viral shock bundled with the
 #                 5 -> 15 bps meme-ticker cost surge. All legacy code paths
 #                 are preserved for exact reproduction.
-#   Rerun A       design = "factorial" (script default): 2x2 viral/normal
+#   Factorial     design = "factorial" (script default): 2x2 viral/normal
 #                 signals x 5/15 bps cost, single adoption t = 60, four arms
 #                 of 24 randomized within persona strata; the cost surge is
 #                 driven by the cost arm, not displayed buzz. Social Momentum
 #                 is split across three prompt constructions (v1 original,
 #                 v2 identity-only, v3 literature-based herding/FOMO),
 #                 logged in sm_variant.
-#   Rerun B       design = "original" + neutral_tickers = TRUE: identical to
+#   Neutral       design = "original" + neutral_tickers = TRUE: identical to
 #                 the original run except every model-visible ticker label is
 #                 an invented symbol (VNTK/KRLO/ZMQR/QRLP); logs keep internal
 #                 names (AAPL/NVDA/AMC/GME) so analysis code is unchanged.
@@ -48,7 +48,17 @@
 #   use only and are disabled in all reported runs (is_forced_trade = FALSE
 #   throughout the logs).
 #
-# All Revision-1 changes to the baseline script are marked with "[R1]".
+# CONFIGURATION NOTICE
+#   The CONFIG$r1 block as shipped is set to the configuration of the LAST run
+#   executed (design = "original", neutral_tickers = TRUE, the neutral run), not to
+#   the factorial default described above. Set the block explicitly before any
+#   run:
+#     Original run: CONFIG$r1$enabled <- FALSE
+#     Factorial:    CONFIG$r1$enabled <- TRUE;  design <- "factorial"; neutral_tickers <- FALSE
+#     Neutral:      CONFIG$r1$enabled <- TRUE;  design <- "original";  neutral_tickers <- TRUE
+#   The archived runs under data/ used exactly these three configurations.
+#
+# All extended-design changes to the baseline script are marked with "[R1]".
 # The unmodified baseline (Attention_driven_trading.R) is kept for diffing.
 # =============================================================================
 
@@ -697,14 +707,14 @@ intervention_enabled <- function(type) {
 }
 
 # ============================================================================
-# [R1] REVISION 1 CONFIGURATION - factorial (Rerun A) & neutral tickers (Rerun B)
+# [R1] EXTENDED-DESIGN CONFIGURATION - factorial (rerun_A) & neutral tickers (rerun_B)
 # ============================================================================
 CONFIG$r1 <- list(
   enabled = TRUE,
-  design  = "original",     # "factorial" = Rerun A. Set "original" (or enabled = FALSE) to reproduce the submitted design.
+  design  = "original",     # "factorial" = the factorial run. Set "original" (or enabled = FALSE) for the baseline staggered design.
   adoption_period = if (TEST_MODE) 10 else 60,  # single adoption time for all treated arms; auto-shortens in TEST_MODE (30-period horizon)
-  neutral_tickers = TRUE,   # TRUE = Rerun B (model sees invented names; logs keep internal names)
-  sm_prompt_variants = TRUE, # randomize SocialMomentum agents across 3 prompt constructions (Major 5)
+  neutral_tickers = TRUE,   # TRUE = neutral-ticker run (model sees invented names; logs keep internal names)
+  sm_prompt_variants = TRUE, # randomize SocialMomentum agents across 3 prompt constructions
   tickers_internal        = c("AAPL","NVDA","AMC","GME"),
   tickers_display_neutral = c("VNTK","KRLO","ZMQR","QRLP")  # verified against listings 2026-07-09
 )
@@ -730,7 +740,7 @@ tc_bps_r1 <- function(sym, is_post, cost_arm) {
   5
 }
 
-# [R1] Social Momentum prompt-construction variants (Major 5 validation).
+# [R1] Social Momentum prompt-construction variants (three alternative constructions).
 # v1 = original; v2 = same identity but Action Priority suppressed at the trading
 # stage; v3 = literature-adapted herding/FOMO wording (distinct construction).
 SM_VARIANT_PROMPTS <- list(
@@ -3458,7 +3468,7 @@ if (any(sens_imbalance$max_diff > 1)) {
   warning("⚠ Sensitivity-cohort imbalance > 1 in at least one stratum (acceptable for small N)")
 }
 
-# [R1] Arm mapping. Factorial (Rerun A): cohort 1 = viral@5bps, 2 = viral@15bps
+# [R1] Arm mapping. Factorial run: cohort 1 = viral@5bps, 2 = viral@15bps
 # (replicates original treatment), 3 = cost-only (normal signals @15bps), 4 = control.
 if (r1_factorial()) {
   arm_map <- data.table(
@@ -3496,7 +3506,7 @@ print(summary_table)
 cat("\nBy Persona:\n")
 print(treatment_assignment[, .N, by = .(persona, treatment_cohort)][order(persona, treatment_cohort)])
 
-# [R1] Social Momentum prompt-variant assignment (balanced across arms), Major 5 validation
+# [R1] Social Momentum prompt-variant assignment (balanced across arms)
 treatment_assignment[, sm_variant := NA_character_]
 if (isTRUE(CONFIG$r1$sm_prompt_variants) && r1_factorial()) {
   sm_rows <- treatment_assignment[persona == "SocialMomentum"]

@@ -3,7 +3,7 @@
 # -----------------------------------------------------------------------------
 # Generates manuscript Appendix B: a complete, code-regenerated reconstruction
 # of one agent-period from the original reported run of "Homo Silicus is
-# Hyper-Rational" (JEIC Revision 1) - the persona system prompt, game rules,
+# Hyper-Rational" (JEIC) - the persona system prompt, game rules,
 # rendered memory block, all three stage prompts (attention allocation with
 # the social leaderboard, information revelation, trading decision with the
 # displayed edge lines and Action Priority instruction), paired with the
@@ -21,7 +21,7 @@
 #   1. Logger stubs: the extracted functions reference the experiment's
 #      logger; no-op stubs are defined here so the file is self-contained.
 #   2. CONFIG$r1$design is set to "original" (the experiment script default
-#      is "factorial" for Rerun A): the worked example reconstructs the
+#      is "factorial" for the factorial run): the worked example reconstructs the
 #      ORIGINAL reported run, and this setting selects the original-design
 #      display-string branch.
 #   3. Paths are configurable below instead of hard-coded.
@@ -169,8 +169,8 @@ CONFIG$r1 <- list(
   enabled = TRUE,
   design  = "original",     # provenance note 2: "original" reproduces the reported run (experiment default is "factorial")
   adoption_period = 60,      # single adoption time for all treated arms (factorial needs no staggering)
-  neutral_tickers = FALSE,   # TRUE = Rerun B (model sees invented names; logs keep internal names)
-  sm_prompt_variants = TRUE, # randomize SocialMomentum agents across 3 prompt constructions (Major 5)
+  neutral_tickers = FALSE,   # TRUE = neutral-ticker run (model sees invented names; logs keep internal names)
+  sm_prompt_variants = TRUE, # randomize SocialMomentum agents across 3 prompt constructions
   tickers_internal        = c("AAPL","NVDA","AMC","GME"),
   tickers_display_neutral = c("VNTA","KRLO","ZMTX","QRLP")  # VERIFY these are not real listed symbols before running
 )
@@ -197,7 +197,7 @@ tc_bps_r1 <- function(sym, is_post, cost_arm) {
   5
 }
 
-# [R1] Social Momentum prompt-construction variants (Major 5 validation).
+# [R1] Social Momentum prompt-construction variants (three alternative constructions).
 # v1 = original; v2 = same identity but Action Priority suppressed at the trading
 # stage; v3 = literature-adapted herding/FOMO wording (distinct construction).
 SM_VARIANT_PROMPTS <- list(

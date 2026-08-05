@@ -2,7 +2,7 @@
 
 # Portable wrapper for the comprehensive analysis battery. The original and
 # neutral-ticker runs share the staggered design expected by that script.
-# Rerun A is factorial and must instead be analyzed by reproduce_results.R.
+# The factorial run (data/rerun_A) must instead be analyzed by reproduce_results.R.
 
 script_arg <- grep("^--file=", commandArgs(FALSE), value = TRUE)
 if (!length(script_arg)) stop("Run this file with Rscript.")

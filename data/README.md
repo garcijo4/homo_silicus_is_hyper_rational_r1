@@ -9,9 +9,9 @@ On systems with `md5sum`, `(cd data && md5sum -c CHECKSUMS.md5)` is equivalent.
 
 | Folder | Run | Design | Field dates |
 |---|---|---|---|
-| `original_run/` | Original reported run | Staggered adoption: Cohort 1 treated from t = 60, Cohort 2 from t = 120, Cohort 3 never treated (32 agents each). Viral signals bundled with the 5→15 bps meme-ticker cost surge. Real ticker labels. | Dec 2025 |
-| `rerun_A/` | Rerun A — factorial | 2×2: viral/normal model-visible signals × 5/15 bps meme-ticker cost; single adoption t = 60; four arms of 24, randomized within persona strata (cohort 1 = viral@5bps, 2 = viral@15bps, 3 = cost-only@15bps, 4 = never-treated). Social Momentum split across 3 prompt constructions (`sm_variant` v1/v2/v3). | Jul 9–15, 2026 |
-| `rerun_B/` | Rerun B — neutral tickers | Identical to the original design except every model-visible ticker label is an invented symbol (VNTK/KRLO/ZMQR/QRLP). Logs keep internal names. | Jul 15–17, 2026 |
+| `original_run/` | Experiment 1 — original reported run | Staggered adoption: Cohort 1 treated from t = 60, Cohort 2 from t = 120, Cohort 3 never treated (32 agents each). Viral signals bundled with the 5→15 bps meme-ticker cost surge. Real ticker labels. | Dec 2025 |
+| `rerun_A/` | Experiment 2 — factorial | 2×2: viral/normal model-visible signals × 5/15 bps meme-ticker cost; single adoption t = 60; four arms of 24, randomized within persona strata (cohort 1 = viral@5bps, 2 = viral@15bps, 3 = cost-only@15bps, 4 = never-treated). Social Momentum split across 3 prompt constructions (`sm_variant` v1/v2/v3). | Jul 9–15, 2026 |
+| `rerun_B/` | Experiment 3 — neutral tickers | Identical to Experiment 1’s design except every model-visible ticker label is an invented symbol (VNTK/KRLO/ZMQR/QRLP). Logs keep internal names. | Jul 15–17, 2026 |
 
 ## Files per run
 
@@ -20,7 +20,7 @@ On systems with `md5sum`, `(cd data && md5sum -c CHECKSUMS.md5)` is equivalent.
   `attention_allocation` from `trading` rows; analyses filter on
   `stage == "trading"`, 24,192 agent-period trading decisions).
 - `treatment_assignment.csv` — randomization record: agent, persona stratum,
-  treatment cohort/arm (and `sm_variant` in Rerun A).
+  treatment cohort/arm (and `sm_variant` in `rerun_A`).
 - `experiment_audit.log` — run audit trail (initialization, workers,
   configuration validation, save timestamps; documents the field dates above).
 - `power_summary.csv` — design-stage power calculation snapshot.
@@ -31,7 +31,7 @@ On systems with `md5sum`, `(cd data && md5sum -c CHECKSUMS.md5)` is equivalent.
 ## Key columns (`experiment_results_final.csv`)
 
 Identifiers and design: `agent_id`, `t` (period 1–252), `stage`, `persona`,
-`treatment_cohort`, `is_treated_now`, `post_treatment`, and in Rerun A
+`treatment_cohort`, `is_treated_now`, `post_treatment`, and in `rerun_A`
 `attention_arm` (viral/normal), `cost_arm` (low/high), `sm_variant`.
 
 Trading rows: `action` (buy/sell/hold), `ticker` (internal name:
