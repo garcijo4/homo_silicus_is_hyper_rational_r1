@@ -1,5 +1,7 @@
 # generated outputs are not committed (data/ IS included; consider Git LFS for the ~50 MB CSVs)
-output/
+# sessionInfo.txt is the release-environment record and is committed explicitly.
+output/*
+!output/sessionInfo.txt
 llm_cache_store/
 *.rds
 .Rhistory

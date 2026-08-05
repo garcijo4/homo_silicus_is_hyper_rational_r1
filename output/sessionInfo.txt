@@ -1,0 +1,28 @@
+# Environment used to verify the focused replication pipeline (reproduce_results.R stages 1-3
+# and the checksum validator). The comprehensive wrapper (run_full_analysis.R) additionally
+# requires the packages listed in README.md; record a fresh sessionInfo() when running it.
+
+R version 4.3.3 (2024-02-29)
+Platform: x86_64-conda-linux-gnu (64-bit)
+Running under: Ubuntu 24.04.4 LTS
+
+Matrix products: default
+BLAS/LAPACK: /tmp/mamba/envs/r/lib/libopenblasp-r0.3.33.so;  LAPACK version 3.12.0
+
+locale:
+[1] C
+
+time zone: Etc/UTC
+tzcode source: system (glibc)
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base
+
+other attached packages:
+[1] digest_0.6.37     glue_1.8.0        fixest_0.13.2     data.table_1.17.8
+
+loaded via a namespace (and not attached):
+ [1] zoo_1.8-14          compiler_4.3.3      sandwich_3.1-1
+ [4] dreamerr_1.4.0      Rcpp_1.1.0          nlme_3.1-168
+ [7] grid_4.3.3          Formula_1.2-5       numDeriv_2016.8-1.1
+[10] stringmagic_1.2.0   lattice_0.22-7

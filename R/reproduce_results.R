@@ -2,7 +2,7 @@
 # reproduce_results.R
 # -----------------------------------------------------------------------------
 # Replication pipeline for:
-#   "Homo Silicus is Hyper-Rational: Why LLM Agents Fail to Replicate
+#   "Homo Silicus is Hyper-Rational: Why GPT-4-Family Agents Fail to Replicate
 #    Attention-Driven Trading" - Journal of Economic Interaction and
 #    Coordination.
 #

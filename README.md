@@ -1,6 +1,6 @@
 # Replication package — *Homo Silicus is Hyper-Rational*
 
-Code for **"Homo Silicus is Hyper-Rational: Why LLM Agents Fail to
+Code for **"Homo Silicus is Hyper-Rational: Why GPT-4-Family Agents Fail to
 Replicate Attention-Driven Trading"** (under review, *Journal of
 Economic Interaction and Coordination*).
 
@@ -43,7 +43,8 @@ R/
                                See its header for an important scope warning.
 data/                          Raw experiment logs, all three runs (included;
                                inventory and codebook in data/README.md).
-output/                        Written by the scripts; not committed.
+output/                        Written by the scripts; generated results are not
+                               committed except `sessionInfo.txt`.
 ```
 
 ## Data
@@ -92,6 +93,13 @@ validator itself uses base R only). Install the minimal set with:
 ```r
 install.packages(c("data.table", "fixest", "glue", "digest"))
 ```
+
+The focused pipeline was last verified with R 4.3.3, `data.table` 1.17.8,
+`fixest` 0.13.2, `glue` 1.8.0, and `digest` 0.6.37 (`output/sessionInfo.txt`).
+Exact package versions matter for a handful of quoted p-values (see the known
+inference sensitivities below); when archiving a release, record a fresh
+`sessionInfo()` — or an `renv::snapshot()` lockfile — from the machine that
+produced the submitted numbers.
 
 The comprehensive analysis wrapper additionally requires `tidyverse`, `did`,
 `bacondecomp`, `modelsummary`, `kableExtra`, `scales`, `sandwich`, and `lmtest`.
@@ -165,7 +173,7 @@ extended analysis code, and portable validation.
 
 Please cite:
 
-> Garcia, John, *Homo Silicus is Hyper-Rational: Why LLM Agents Fail to
+> Garcia, John, *Homo Silicus is Hyper-Rational: Why GPT-4-Family Agents Fail to
 > Replicate Attention-Driven Trading* (December 10, 2025), SSRN 5901742.
 > https://doi.org/10.2139/ssrn.5901742
 
