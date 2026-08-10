@@ -629,9 +629,28 @@ tryCatch({
 # --- CS Dynamic Event-Time ---
 if (cs_works && !is.null(cs_buy_results) && !is.null(cs_sell_results)) {
 
-  cat("\n--- CS Dynamic Event-Time Analysis ---\n")
-  cs_buy_dyn  <- did::aggte(cs_buy_results,  type = "dynamic", min_e = -20, max_e = 40, balance_e = TRUE)
-  cs_sell_dyn <- did::aggte(cs_sell_results, type = "dynamic", min_e = -20, max_e = 40, balance_e = TRUE)
+  cat("\n--- CS Dynamic Event-Time Analysis (Cohort 1 vs. never-treated) ---\n")
+  ## The event-study figures are estimated on the Cohort 1 + never-treated
+  ## subsample (single adoption date), so all event times s = -20..40 are
+  ## observed for the plotted cohort and no balance_e trimming is needed.
+  ## (The earlier balance_e = TRUE was coerced to the numeric horizon 1 and
+  ## truncated post-treatment support at s = 1.) The pooled att_gt objects
+  ## above continue to produce the simple and group aggregations.
+  cs_data_c1 <- cs_data_base %>% filter(treatment_cohort %in% c(1, 3))
+  cs_buy_c1 <- did::att_gt(
+    yname = "buy_indicator", tname = "t", idname = "agent_id_num",
+    gname = "first_treat", data = cs_data_c1,
+    control_group = "nevertreated", anticipation = 0, clustervars = "agent_id_num",
+    allow_unbalanced_panel = TRUE, bstrap = TRUE, biters = 1000
+  )
+  cs_sell_c1 <- did::att_gt(
+    yname = "sell_indicator", tname = "t", idname = "agent_id_num",
+    gname = "first_treat", data = cs_data_c1,
+    control_group = "nevertreated", anticipation = 0, clustervars = "agent_id_num",
+    allow_unbalanced_panel = TRUE, bstrap = TRUE, biters = 1000
+  )
+  cs_buy_dyn  <- did::aggte(cs_buy_c1,  type = "dynamic", min_e = -20, max_e = 40)
+  cs_sell_dyn <- did::aggte(cs_sell_c1, type = "dynamic", min_e = -20, max_e = 40)
 
   # Helper for CS dynamic plots
   make_cs_dynamic_plot <- function(agg_dyn, title, outfile, scale_to_pp = TRUE) {
