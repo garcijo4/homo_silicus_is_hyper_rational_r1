@@ -82,6 +82,7 @@ Rscript R/verify_data.R                # validate all included raw files
 Rscript R/reproduce_results.R            # all stages (~2–3 min)
 Rscript R/reproduce_results.R 2          # Experiment 2 (factorial) only
 Rscript R/worked_example_appendix_B.R    # Appendix B text
+Rscript R/pgr_plr_all_experiments.R      # opportunity-adjusted PGR/PLR, Experiments 1-3 (+ bootstrap CIs)
 Rscript R/run_full_analysis.R original_run
 Rscript R/run_full_analysis.R rerun_B
 ```
@@ -134,6 +135,7 @@ original names for checksum stability.
 | Table 4 | First-stage attention associations, recomputed under the single documented specification (saves `table4_first_stage.csv`) | pipeline stage 1 |
 | Results (exploratory) | Forward-return-on-attention-depth regression | pipeline stage 1 |
 | Results (disposition) | PGR/PLR = 0.478/0.638 (ratio 0.75), replay validation, fee sensitivity; descriptive gain/loss moderation comparison with window sensitivity | pipeline stage 1 |
+| Results (disposition, cross-experiment) | Reversal replicated in Experiments 2-3: ratios 0.588 [0.511, 0.660] and 0.690 [0.626, 0.750]; Experiment 1 ratio 0.750 [0.653, 0.827] (agent-cluster bootstrap, B = 2,000, seed 42) | `R/pgr_plr_all_experiments.R` |
 | Appendix B | Worked example | `worked_example_appendix_B.R` |
 | Appendix Tables A4/A5 | Persona fidelity; displayed-edge alignment | full analysis script on `original_run` data (sections R1-B/R1-C) |
 
